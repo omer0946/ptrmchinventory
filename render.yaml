@@ -6,7 +6,7 @@ databases:
 
 services:
   - type: web
-    name: petromech-inventory
+    name: petromech-material
     runtime: python
     plan: free
     buildCommand: "pip install -r requirements.txt"
