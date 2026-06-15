@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Issue Slip #{{ log.id }} | Warehouse Inventory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        @media print {
+            body { background: #ffffff !important; color: #0f172a !important; }
+            .no-print { display: none !important; }
+            .slip-box { border: 1px solid #94a3b8 !important; box-shadow: none !important; }
+            .slip-box, .slip-box * { background: #ffffff !important; color: #0f172a !important; }
+            .slip-table th, .slip-table td { border-color: #cbd5e1 !important; }
+            .sig-line { border-color: #0f172a !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased">
+    <div class="max-w-2xl mx-auto px-4 py-8">
+        <div class="no-print flex justify-end gap-3 mb-4">
+            <button onclick="window.print()" class="btn btn-primary">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.066 48.066 0 011.913-.247m10.5 0a48.11 48.11 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125V6.34" /></svg>
+                Print
+            </button>
+            <button onclick="window.close()" class="btn btn-ghost">Close</button>
+        </div>
+
+        <div class="slip-box card p-6 sm:p-8">
+            <div class="flex items-start justify-between border-b border-slate-700 pb-4 mb-4">
+                <div>
+                    <h1 class="text-xl font-bold text-white">Material Issue Slip</h1>
+                    <p class="text-sm text-slate-400">Warehouse Inventory &mdash; Construction Site Module</p>
+                </div>
+                <div class="text-right text-sm">
+                    <p class="text-slate-400">Slip / Log No.</p>
+                    <p class="font-semibold text-white">#{{ log.id }}</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+                <div>
+                    <p class="text-slate-400">Date &amp; Time</p>
+                    <p class="font-medium text-white">{{ log.timestamp.strftime('%Y-%m-%d %H:%M') if log.timestamp else '-' }}</p>
+                </div>
+                <div>
+                    <p class="text-slate-400">Transaction Type</p>
+                    <p class="font-medium text-white">{{ 'Material Transfer' if log.action == 'TRANSFER' else 'Check-Out / Material Issue' }}</p>
+                </div>
+                <div>
+                    <p class="text-slate-400">Issued By</p>
+                    <p class="font-medium text-white">{{ log.user.full_name if log.user else 'System' }}</p>
+                </div>
+                {% if log.reason %}
+                <div>
+                    <p class="text-slate-400">Reason</p>
+                    <p class="font-medium text-white">{{ log.reason }}</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <table class="slip-table w-full text-sm mb-6">
+                <thead>
+                    <tr class="text-left text-slate-400 uppercase text-xs tracking-wide">
+                        <th class="border-b border-slate-700 py-2 pr-3">Field</th>
+                        <th class="border-b border-slate-700 py-2">Details</th>
+                    </tr>
+                </thead>
+                <tbody class="text-slate-200">
+                    <tr>
+                        <td class="border-b border-slate-800 py-2 pr-3 text-slate-400">Item</td>
+                        <td class="border-b border-slate-800 py-2 font-medium text-white">{{ log.item.name if log.item else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="border-b border-slate-800 py-2 pr-3 text-slate-400">Item Code</td>
+                        <td class="border-b border-slate-800 py-2">{{ log.item.item_code if log.item else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="border-b border-slate-800 py-2 pr-3 text-slate-400">Quantity</td>
+                        <td class="border-b border-slate-800 py-2">{{ '%g'|format(log.quantity) if log.quantity is not none else '-' }} {{ log.item.unit if log.item else '' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="border-b border-slate-800 py-2 pr-3 text-slate-400">Heat Number</td>
+                        <td class="border-b border-slate-800 py-2">{{ log.heat_number or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="border-b border-slate-800 py-2 pr-3 text-slate-400">Batch Number</td>
+                        <td class="border-b border-slate-800 py-2">{{ log.batch_number or '-' }}</td>
+                    </tr>
+                    {% if log.action == 'TRANSFER' %}
+                    <tr>
+                        <td class="border-b border-slate-800 py-2 pr-3 text-slate-400">From Location</td>
+                        <td class="border-b border-slate-800 py-2">{{ log.location.name if log.location else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="border-b border-slate-800 py-2 pr-3 text-slate-400">To Location</td>
+                        <td class="border-b border-slate-800 py-2">{{ log.target_location.name if log.target_location else '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td class="border-b border-slate-800 py-2 pr-3 text-slate-400">Issued From</td>
+                        <td class="border-b border-slate-800 py-2">{{ log.location.name if log.location else '-' }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td class="py-2 pr-3 text-slate-400 align-top">Notes</td>
+                        <td class="py-2">{{ log.notes or '-' }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="grid grid-cols-2 gap-8 mt-12 text-sm">
+                <div>
+                    <div class="sig-line border-t border-slate-500 pt-2">Site Supervisor Signature</div>
+                </div>
+                <div>
+                    <div class="sig-line border-t border-slate-500 pt-2">Received By / Date</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

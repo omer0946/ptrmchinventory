@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% set active_page = "transfers" %}
+{% block title %}Material Transfer{% endblock %}
+{% block page_title %}Material Transfer{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Transfer form -->
+        <div class="card p-5 lg:col-span-1">
+            <h2 class="text-base font-semibold text-white mb-1">New Transfer</h2>
+            <p class="text-sm text-slate-400 mb-4">Move stock between locations. The transfer is applied atomically &mdash; both balances update together or not at all.</p>
+
+            <form id="transfer-form" class="space-y-4">
+                <div>
+                    <label class="label" for="transfer-item">Item *</label>
+                    <select id="transfer-item" class="input" required>
+                        <option value="">Select item...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="label" for="transfer-from">From Location *</label>
+                    <select id="transfer-from" class="input" required>
+                        <option value="">Select source location...</option>
+                    </select>
+                    <p id="transfer-from-stock" class="text-xs text-slate-500 mt-1"></p>
+                </div>
+                <div>
+                    <label class="label" for="transfer-to">To Location *</label>
+                    <select id="transfer-to" class="input" required>
+                        <option value="">Select destination location...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="label" for="transfer-quantity">Quantity *</label>
+                    <input type="number" id="transfer-quantity" class="input" min="0" step="any" placeholder="0" required>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="label" for="transfer-heat-number">Heat Number</label>
+                        <input type="text" id="transfer-heat-number" class="input" placeholder="e.g. H-12345">
+                    </div>
+                    <div>
+                        <label class="label" for="transfer-batch-number">Batch Number</label>
+                        <input type="text" id="transfer-batch-number" class="input" placeholder="e.g. B-2024-001">
+                    </div>
+                </div>
+                <div>
+                    <label class="label" for="transfer-notes">Notes</label>
+                    <textarea id="transfer-notes" class="input" rows="2" placeholder="Optional reference, e.g. work order #"></textarea>
+                </div>
+                <div id="transfer-form-error" class="hidden rounded-md border border-red-500/30 bg-red-500/10 text-red-400 text-sm px-3 py-2"></div>
+                <button type="submit" class="btn btn-primary w-full justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>
+                    Transfer Stock
+                </button>
+            </form>
+        </div>
+
+        <!-- Recent transfers -->
+        <div class="card p-5 lg:col-span-2">
+            <h2 class="text-base font-semibold text-white mb-4">Recent Transfers</h2>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Item</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Quantity</th>
+                            <th>By</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transfers-table-body">
+                        <tr><td colspan="6" class="text-slate-500">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/transfers.js') }}"></script>
+{% endblock %}

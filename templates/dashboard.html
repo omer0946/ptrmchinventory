@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% set active_page = "dashboard" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Stat cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card p-5">
+            <p class="text-sm text-slate-400">Total Items</p>
+            <p id="stat-total-items" class="text-3xl font-bold text-white mt-2">-</p>
+            <p class="text-xs text-slate-500 mt-1">Distinct SKUs tracked</p>
+        </div>
+        <div class="card p-5">
+            <p class="text-sm text-slate-400">Locations</p>
+            <p id="stat-total-locations" class="text-3xl font-bold text-white mt-2">-</p>
+            <p class="text-xs text-slate-500 mt-1">Warehouses &amp; site depots</p>
+        </div>
+        <div class="card p-5">
+            <p class="text-sm text-slate-400">Pending Requests</p>
+            <p id="stat-pending-requests" class="text-3xl font-bold text-amber-400 mt-2">-</p>
+            <p class="text-xs text-slate-500 mt-1">Awaiting admin approval</p>
+        </div>
+        <div id="stat-low-stock-card" class="card p-5">
+            <p class="text-sm text-slate-400">Critical Stock Alerts</p>
+            <p id="stat-low-stock" class="text-3xl font-bold text-emerald-400 mt-2">-</p>
+            <p class="text-xs text-slate-500 mt-1">Items below minimum level</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Low stock alerts -->
+        <div class="card p-5 lg:col-span-2">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-base font-semibold text-white">Critical Stock Alerts</h2>
+                <a href="/inventory" class="text-xs font-medium text-blue-400 hover:text-blue-300">View Inventory &rarr;</a>
+            </div>
+            <div id="low-stock-content">
+                <p class="text-sm text-slate-500">Loading...</p>
+            </div>
+        </div>
+
+        <!-- Stock by location -->
+        <div class="card p-5">
+            <h2 class="text-base font-semibold text-white mb-4">Stock Distribution by Location</h2>
+            <div id="location-totals-content" class="space-y-4">
+                <p class="text-sm text-slate-500">Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Material wastage -->
+    <div class="card p-5">
+        <h2 class="text-base font-semibold text-white mb-4">Material Wastage by Reason</h2>
+        <div id="wastage-content" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <p class="text-sm text-slate-500">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Recent activity -->
+    <div class="card p-5">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-semibold text-white">Recent Activity</h2>
+            {% if current_user.role in ['Admin', 'Manager', 'Storekeeper'] %}
+            <a href="/logs" class="text-xs font-medium text-blue-400 hover:text-blue-300">View Full Log &rarr;</a>
+            {% endif %}
+        </div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Item</th>
+                        <th>Location</th>
+                        <th>Quantity</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="recent-activity-body">
+                    <tr><td colspan="7" class="text-slate-500">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

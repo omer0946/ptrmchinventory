@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% set active_page = "logs" %}
+{% block title %}Inventory Log{% endblock %}
+{% block page_title %}Inventory Log{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="card p-4 flex flex-col sm:flex-row sm:items-center gap-3">
+        <p class="text-sm text-slate-400 flex-1">Full audit trail of every check-in, check-out, transfer and request status change.</p>
+        <select id="action-filter" class="input sm:max-w-[220px]">
+            <option value="">All Actions</option>
+            <option value="CHECK_IN">Check In</option>
+            <option value="CHECK_OUT">Check Out</option>
+            <option value="TRANSFER">Transfer</option>
+            <option value="ITEM_CREATED">Item Created</option>
+            <option value="ITEM_UPDATED">Item Updated</option>
+            <option value="ITEM_DELETED">Item Deleted</option>
+            <option value="REQUEST_CREATED">Request Created</option>
+            <option value="REQUEST_UPDATED">Request Updated</option>
+            <option value="REQUEST_APPROVED">Request Approved</option>
+            <option value="REQUEST_REJECTED">Request Rejected</option>
+            <option value="REQUEST_DELETED">Request Deleted</option>
+        </select>
+        <select id="reason-filter" class="input sm:max-w-[200px]">
+            <option value="">All Reasons</option>
+            <option value="Consumed">Consumed</option>
+            <option value="Damaged">Damaged</option>
+            <option value="Scrap">Scrap</option>
+            <option value="Lost">Lost</option>
+        </select>
+        <a id="export-logs-btn" href="/api/reports/logs.xlsx" class="btn btn-secondary whitespace-nowrap">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+            Export Excel
+        </a>
+    </div>
+
+    <div class="card p-4">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Item</th>
+                        <th>From / Location</th>
+                        <th>To</th>
+                        <th>Quantity</th>
+                        <th>Heat / Batch No.</th>
+                        <th>Reason</th>
+                        <th>MTR</th>
+                        <th>Notes</th>
+                        <th class="text-right">Slip</th>
+                    </tr>
+                </thead>
+                <tbody id="logs-table-body">
+                    <tr><td colspan="12" class="text-slate-500">Loading log entries...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/logs.js') }}"></script>
+{% endblock %}

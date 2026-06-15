@@ -1,0 +1,22 @@
+databases:
+  - name: santiye-erp-db
+    plan: free
+    databaseName: santiye_erp
+    user: santiye_erp
+
+services:
+  - type: web
+    name: santiye-erp
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn wsgi:app"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: santiye-erp-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: 3.11.9
