@@ -6,7 +6,7 @@ databases:
 
 services:
   - type: web
-    name: santiye-erp
+    name: petromech-inventory
     runtime: python
     plan: free
     buildCommand: "pip install -r requirements.txt"
